@@ -1,0 +1,35 @@
+body{
+    background: linear-gradient(90deg, #8A2BE2, #1E90FF);
+    color: white;
+    font-family: Georgia;
+}
+#opciones{
+    margin: 0 auto;
+    font-size: larger;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}
+#pregunta{
+    margin: 0 auto;
+    font-size: xx-large;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+div{
+    margin: 0 auto;
+    font-size: larger;
+    display: flex;
+    justify-content: center; 
+     align-items: center;
+     gap: 20px;
+     margin-top: 35px;
+
+}
+label:hover{
+    background-color: #8A2BE2;
+    font-size: xx-large;
+    color: black;
+}
