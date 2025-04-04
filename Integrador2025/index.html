@@ -1,23 +1,32 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Preguntados!</title>
     <link rel="stylesheet" href="css.css">
 </head>
+
 <body>
+
+    <h1>Preguntados: Edición paises</h1>
     
-    <h1>Preguntados: Edicion paises</h1>
-    <p id="pregunta"></p> 
-    <p id="pais"></p>
-    <!-- <label>
-        <input type="radio" name="color" value="rojo">
-        
-    </label> -->
+    <br><br>
+    <p id="pregunta"> </p>
     <div id="opciones">
-        <!-- Aquí se cargarán las opciones de radio dinámicamente -->
+    
+    <br> <br></div>
+    <div id="pais"> </div>
+       
+    
+    <div id="botones">
+        <button onclick="validarRespuestas()" id="boton-confirmar">Validar</button>
+        
     </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="functions.js"> </script>
 </body>
+
 </html>

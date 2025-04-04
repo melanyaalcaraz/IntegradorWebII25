@@ -33,3 +33,30 @@ label:hover{
     font-size: xx-large;
     color: black;
 }
+
+#boton-confirmar, #boton-sPregunta {
+    background-color: #4CAF51;
+    color: white; 
+    font-size: 16px; 
+    border: none; 
+    border-radius: 5px; 
+    padding: 10px 20px; 
+    cursor: pointer;
+    width: 150px;
+    height: 55px;
+    justify-content: center;
+}
+
+#boton-confirmar:hover {
+    background-color: #45a049; /* Fondo más oscuro al pasar el mouse */
+}
+#boton-sPregunta:hover {
+    background-color: #45a049; /* Fondo más oscuro al pasar el mouse */
+}
+#botones{
+    display: flex;
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center;    /* Centra verticalmente */
+ 
+}
+
