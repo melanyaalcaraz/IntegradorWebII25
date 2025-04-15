@@ -1,3 +1,14 @@
+//Variables necesarias  
+let contadorPreguntas = 0;      //Contador de preguntas
+const maxPreguntas = 10;        // Maximo de preguntas
+let respuestasCorrectas = 0;   // Contador de respuestas correctas
+let respuestasIncorrectas = 0; // Contador de respuestas incorrectas
+let puntos = 0;                // Contador de puntos
+let tiemposRespuesta = [];     // Array para almacenar los tiempos de respuesta de cada pregunta
+let inicioPartida = null;      // Variable para registrar el tiempo inicial
+let inicioPregunta;             //Variable para registar el tiempo promedio
+
+// Función conectar
 async function conectar(endpoint, opciones = {}) {
     const urlBase = 'https://restcountries.com/v3.1'; // URL base de la API
     const urlCompleta = `${urlBase}${endpoint}`;
@@ -13,9 +24,8 @@ async function conectar(endpoint, opciones = {}) {
         throw error;
     }
 }
-let contadorPreguntas= 0;
-const maxPreguntas=10;
 
+//Funcion para generar radios texto
 function generarRadios(countries) {
     const container = document.getElementById('opciones');
     container.innerHTML = ''; // Limpiar cualquier contenido previo
@@ -43,6 +53,8 @@ function generarRadios(countries) {
         container.appendChild(div);
     });
 }
+
+//Funcion para generar radios numero
 function generarRadiosNumero(opciones) {
     const container = document.getElementById('opciones');
     container.innerHTML = ''; // Limpiar cualquier contenido previo
@@ -71,32 +83,81 @@ function generarRadiosNumero(opciones) {
     });
 }
 
-async function obtenerCapital() {
+//Funcin para validar respuestas con sweetalert
+async function validarRespuestas(seleccionado, respuestaCorrecta) {
+    // Validar la respuesta
+    if (seleccionado) {
+        if (seleccionado === respuestaCorrecta) {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Correcto!',
+                text: '¡Respuesta correcta!',
+                confirmButtonText: 'Siguiente pregunta',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    seleccionarPregunta();
+                }
+            })
+            return true;
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: `Respuesta incorrecta. La respuesta correcta es: ${respuestaCorrecta} `,
+                confirmButtonText: 'Siguiente pregunta',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    seleccionarPregunta();
+                }
+            })
+            return false;
+        }
+    } else {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Atención',
+            text: 'Por favor, selecciona una opción.',
+        });
 
+    }
+}
+
+//Funcion para obtener capital, para pregunta de capitales
+async function obtenerCapital() {
     const todosLosPaises = await conectar('/all');
+
     const paisConCapital = todosLosPaises
         .filter(country => country.capital && country.capital.length > 0)
         .sort(() => 0.5 - Math.random())
         .slice(0, 1);
+
     console.log("Hola " + paisConCapital[0].capital)
+
     return paisConCapital[0].capital;
 
 }
 
 
+//Funcion para obtener un pais de una capital, para pregunta de capitales
 async function obtenerPaisDeCapital() {
     const capital = await obtenerCapital();
+
     console.log(capital);
+
     const endpoint = `/capital/${encodeURIComponent(capital)}`; // Sustituimos {capital} con la capital real
     const datos = await conectar(endpoint);
+
     console.log(datos[0])
+
     return datos[0]; // Retornamos el primer objeto del array
 
 }
 
-async function generarPregunta1() {
+
+//Funcion para pregunta de capitales
+async function generarPreguntaCapital() {
     try {
-       
+
         if (contadorPreguntas >= maxPreguntas) {
             finalizarJuego(); // Llamar a una función para finalizar el juego
             return; // Detener el flujo si se alcanza el número máximo de preguntas
@@ -132,7 +193,7 @@ async function generarPregunta1() {
         // Configurar el evento para validar la selección
         const radios = document.getElementsByName('pais');
         const boton = document.getElementById('boton-confirmar');
-        boton.onclick = () => {
+        boton.onclick = async () => {
             let seleccionado = null; // Variable para guardar el valor del radio seleccionado
 
             // Buscar el radio seleccionado
@@ -143,14 +204,21 @@ async function generarPregunta1() {
                 }
             }
 
-            console.log("Seleccionado:", seleccionado); // Confirmar el valor seleccionado
-            validarRespuestas(seleccionado, paisCorrecto.name.common); // Validar la respuesta
+            const esCorrecto = await validarRespuestas(seleccionado, paisCorrecto.name.common);
+            if (esCorrecto == true) {
+                puntos += 3;
+                respuestasCorrectas++;
+            } else if (esCorrecto == false) {
+                respuestasIncorrectas++;
+            }
         };
     } catch (error) {
         console.error("Error al generar la pregunta:", error); // Manejar errores en consola
     }
 }
 
+
+//Funcion para limpiar los contenedores
 function limpiarContenedores() {
     // Limpiar el contenedor de la pregunta
     const preguntaContainer = document.getElementById('pregunta');
@@ -166,6 +234,8 @@ function limpiarContenedores() {
 
 }
 
+
+//Funcion para pregunta bandera
 async function generarPreguntaBandera() {
     try {
         if (contadorPreguntas >= maxPreguntas) {
@@ -197,7 +267,7 @@ async function generarPreguntaBandera() {
         generarRadios(opciones);
         const radios = document.getElementsByName('pais');
         const boton = document.getElementById('boton-confirmar');
-        boton.onclick = () => {
+        boton.onclick = async () => {
 
             let seleccionado = null; // Variable para guardar el radio seleccionado
 
@@ -208,14 +278,25 @@ async function generarPreguntaBandera() {
                     break; // Salimos del bucle una vez encontrado
 
                 }
-            } validarRespuestas(seleccionado, paisCorrecto.name.common);
+            }
+
+            const esCorrecto = await validarRespuestas(seleccionado, paisCorrecto.name.common);
+            if (esCorrecto == true) {
+                puntos += 5;
+                respuestasCorrectas++;
+            } else if (esCorrecto == false) {
+                respuestasIncorrectas++;
+            }
         };
 
     } catch (error) {
         console.error('Error al generar la pregunta de bandera:', error);
     }
 }
-async function generarPreguntaPais() {
+
+
+//Funcion para pregunta idioma(pregunta extra)
+async function generarPreguntaIdioma() {
     try {
         if (contadorPreguntas >= maxPreguntas) {
             finalizarJuego(); // Llamar a una función para finalizar el juego
@@ -259,7 +340,7 @@ async function generarPreguntaPais() {
         // Configurar la validación de la respuesta cuando se haga clic en el botón
         const radios = document.getElementsByName('pais');
         const boton = document.getElementById('boton-confirmar');
-        boton.onclick = () => {
+        boton.onclick = async () => {
             let seleccionado = null;
 
             // Buscar cuál radio fue seleccionado
@@ -270,14 +351,21 @@ async function generarPreguntaPais() {
                 }
             }
 
-            // Validar la respuesta seleccionada
-            validarRespuestas(seleccionado, paisCorrecto.name.common);
+            const esCorrecto = await validarRespuestas(seleccionado, paisCorrecto.name.common);
+            if (esCorrecto == true) {
+                puntos += 3;
+                respuestasCorrectas++;
+            } else if (esCorrecto == false) {
+                respuestasIncorrectas++;
+            }
         };
     } catch (error) {
         console.error("Error al generar la pregunta de países por idioma:", error);
     }
 }
 
+
+//Funcion para generar pregunta de paises limitrofes
 async function generarPreguntaLimitrofes() {
     try {
         if (contadorPreguntas >= maxPreguntas) {
@@ -317,7 +405,7 @@ async function generarPreguntaLimitrofes() {
 
         const radios = document.getElementsByName('pais');
         const boton = document.getElementById('boton-confirmar');
-        boton.onclick = () => {
+        boton.onclick = async () => {
             let seleccionado = null;
 
             // Buscar el radio seleccionado
@@ -329,83 +417,88 @@ async function generarPreguntaLimitrofes() {
             }
 
             // Validar la respuesta seleccionada
-            validarRespuestas(seleccionado, numeroLimites.toString());
+            validarRespuestas();
+            const esCorrecto = await validarRespuestas(seleccionado, numeroLimites.toString());
+            if (esCorrecto == true) {
+                puntos += 3;
+                respuestasCorrectas++;
+            } else if (esCorrecto == false) {
+                respuestasIncorrectas++;
+            }
         };
     } catch (error) {
         console.error("Error al generar la pregunta de países limítrofes:", error);
     }
 }
 
-async function validarRespuestas(seleccionado, respuestaCorrecta) {
-    // Validar la respuesta
-    if (seleccionado) {
-        if (seleccionado === respuestaCorrecta) {
-            Swal.fire({
-                icon: 'success',
-                title: '¡Correcto!',
-                text: '¡Respuesta correcta!',
-                confirmButtonText: 'Siguiente pregunta',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    seleccionarPregunta();
-                }
-            })
 
-        } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: `Respuesta incorrecta. La respuesta correcta es: ${respuestaCorrecta} `,
-                confirmButtonText: 'Siguiente pregunta',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    seleccionarPregunta();
-                }
-            })
-        }
-    } else {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Atención',
-            text: 'Por favor, selecciona una opción.',
-        });
-    }
-}
+
+// Función para generar preguntas sin orden
 function seleccionarPregunta() {
-    const tipoPregunta = Math.floor(Math.random() * 4); // Genera un número entre 0 y 2
+    if (contadorPreguntas === 0) {
+        inicioPartida = new Date(); // Registrar el inicio de la partida
+    } else {
+        // Registrar el tiempo de respuesta para la pregunta anterior
+        const finPregunta = new Date();
+        const duracionPregunta = (finPregunta - inicioPregunta) / 1000; // En segundos
+        tiemposRespuesta.push(duracionPregunta);
+    }
+
+    // Registrar el inicio de la nueva pregunta
+    inicioPregunta = new Date();
+
+    const tipoPregunta = Math.floor(Math.random() * 4);
     switch (tipoPregunta) {
         case 0:
-            generarPregunta1(); // Pregunta de capital
+            generarPreguntaCapital();
             break;
         case 1:
-            generarPreguntaBandera(); // Pregunta de bandera
+            generarPreguntaBandera();
             break;
         case 2:
             generarPreguntaLimitrofes();
             break;
         case 3:
-            generarPreguntaPais();
+            generarPreguntaIdioma();
             break;
         default:
             console.error('Tipo de pregunta no reconocido');
     }
+    
 }
 
+// Función para finalizar juego
 function finalizarJuego() {
+    const finPartida = new Date();
+    const duracionPartida = (finPartida - inicioPartida) / 1000; // En segundos
+
+    // Calcular el tiempo promedio de respuesta
+    const tiempoPromedio = tiemposRespuesta.length > 0
+        ? tiemposRespuesta.reduce((total, tiempo) => total + tiempo, 0) / tiemposRespuesta.length
+        : 0;
+
+    // Mostrar resultados en la interfaz
     const preguntaContainer = document.getElementById('pregunta');
-    preguntaContainer.textContent = "¡Juego terminado! Gracias por participar.";
+    preguntaContainer.textContent = `¡Juego terminado! Gracias por participar.`;
 
     const opcionesContainer = document.getElementById('opciones');
-    opcionesContainer.innerHTML = ''; 
-    const opcionesPais = document.getElementById('pais');
-    opcionesPais.innerHTML = '';// Limpiar las opciones
+    opcionesContainer.innerHTML = `
+        <br>
+        Respuestas correctas: ${respuestasCorrectas} <br>
+        Respuestas incorrectas: ${respuestasIncorrectas} <br>
+        Puntos: ${puntos} <br>
+        Duración total: ${Math.floor(duracionPartida / 60)}:${Math.floor(duracionPartida % 60)} <br>
+        Tiempo promedio por pregunta: ${tiempoPromedio.toFixed(2)} segundos <br>
+    `;
 
-    const boton = document.getElementById('boton-confirmar');
-    boton.onclick = null; // Deshabilitar el botón
+    document.getElementById('pais').innerHTML = ''; // Limpiar las opciones
+    document.getElementById('boton-confirmar').onclick = null; // Deshabilitar el botón
 }
 
-if (contadorPreguntas <=10 ){
+
+
+if (contadorPreguntas <= 10) {
     seleccionarPregunta();
-} else{
+} else {
     finalizarJuego();
 }
