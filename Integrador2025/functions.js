@@ -433,7 +433,7 @@ async function generarPreguntaLimitrofes() {
 }
 
 function guardarPartida(nombre, puntos, correctas, incorrectas, duracion) {
-    fetch('http://localhost:3000/api/ranking', {
+    fetch('https://backend-preguntados.vercel.app/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
