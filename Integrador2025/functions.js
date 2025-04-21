@@ -1,12 +1,13 @@
 //Variables necesarias  
-let contadorPreguntas = 0;      //Contador de preguntas
-const maxPreguntas = 10;        // Maximo de preguntas
-let respuestasCorrectas = 0;   // Contador de respuestas correctas
-let respuestasIncorrectas = 0; // Contador de respuestas incorrectas
+let contadorPreguntas = 0;       //Contador de preguntas
+const maxPreguntas = 10;         // Maximo de preguntas
+let respuestasCorrectas = 0;    // Contador de respuestas correctas
+let respuestasIncorrectas = 0;  // Contador de respuestas incorrectas
 let puntos = 0;                // Contador de puntos
-let tiemposRespuesta = [];     // Array para almacenar los tiempos de respuesta de cada pregunta
+let tiemposRespuesta = [];      // Array para almacenar los tiempos de respuesta de cada pregunta
 let inicioPartida = null;      // Variable para registrar el tiempo inicial
-let inicioPregunta;             //Variable para registar el tiempo promedio
+let nombreJugador = "";        // Nombre del jugador
+let inicioPregunta;
 
 // Función conectar
 async function conectar(endpoint, opciones = {}) {
@@ -431,10 +432,48 @@ async function generarPreguntaLimitrofes() {
     }
 }
 
+function guardarPartida(nombre, puntos, correctas, incorrectas, duracion) {
+    fetch('http://localhost:3000/api/ranking', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            nombre,
+            puntos,
+            correctas,
+            incorrectas,
+            duracion
+        })
+    })
+        .then(res => res.json())
+        .then(data => {
+            console.log('Partida guardada:', data);
+            Swal.fire({
+                icon: 'success',
+                title: '¡Puntaje guardado!',
+                text: `Gracias por jugar, ${nombre}!`
+            });
+        })
+        .catch(err => {
+            console.error('Error al guardar partida:', err);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo guardar el puntaje. Intentalo más tarde.'
+            });
+        });
+}
+
+
 
 
 // Función para generar preguntas sin orden
 function seleccionarPregunta() {
+    document.getElementById("boton-ranking").style.display = "none";
+    document.getElementById("botones").style.display = "flex";
+    document.getElementById("boton-confirmar").style.display = "inline-block";
+
     if (contadorPreguntas === 0) {
         inicioPartida = new Date(); // Registrar el inicio de la partida
     } else {
@@ -464,11 +503,54 @@ function seleccionarPregunta() {
         default:
             console.error('Tipo de pregunta no reconocido');
     }
-    
+
 }
+
+let jugadorListo = false; // Variable para controlar si el jugador está listo
+
+function pedirNombre() {
+    document.getElementById("botones").style.display = "none";
+    const opciones = document.getElementById("opciones");
+    opciones.innerHTML = ""; // Limpiar cualquier contenido previo
+
+    // Crear el input de texto
+    const input = document.createElement("input");
+    input.type = "text";
+    input.id = "nombreJugador";
+    input.placeholder = "Escribe tu nombre";
+
+    // Crear el botón
+    const button = document.createElement("button");
+    button.innerText = "Iniciar Juego";
+    // Cambiar la id del botón
+    button.id = "botonIniciar";
+
+    // Manejar el clic del botón
+    button.onclick = function () {
+        // Obtener el nombre del jugador
+        const nombre = document.getElementById("nombreJugador").value;
+
+        // Verificar si el jugador ha ingresado un nombre
+        if (nombre.trim() !== "") {
+            nombreJugador = nombre;
+            jugadorListo = true;  // Establecer que el jugador está listo
+            seleccionarPregunta();
+        } else {
+            alert("Por favor, ingresa un nombre.");
+            jugadorListo = false; // El jugador no está listo si no ingresó nombre
+        }
+    };
+
+    // Agregar el input y el botón al contenedor
+    opciones.appendChild(input);
+    opciones.appendChild(button);
+}
+
 
 // Función para finalizar juego
 function finalizarJuego() {
+    document.getElementById("boton-confirmar").style.display = "none";
+    document.getElementById("boton-ranking").style.display = "flex";
     const finPartida = new Date();
     const duracionPartida = (finPartida - inicioPartida) / 1000; // En segundos
 
@@ -479,7 +561,7 @@ function finalizarJuego() {
 
     // Mostrar resultados en la interfaz
     const preguntaContainer = document.getElementById('pregunta');
-    preguntaContainer.textContent = `¡Juego terminado! Gracias por participar.`;
+    preguntaContainer.textContent = `¡Juego terminado! Gracias por participar ${nombreJugador.trim()}.`;
 
     const opcionesContainer = document.getElementById('opciones');
     opcionesContainer.innerHTML = `
@@ -493,12 +575,74 @@ function finalizarJuego() {
 
     document.getElementById('pais').innerHTML = ''; // Limpiar las opciones
     document.getElementById('boton-confirmar').onclick = null; // Deshabilitar el botón
+    guardarPartida(nombreJugador.trim(), puntos, respuestasCorrectas, respuestasIncorrectas, duracionPartida);
+    document.getElementById('boton-reiniciar').style.display = 'inline-block';
+
+}
+
+function mostrarRanking() {
+
+    fetch('http://localhost:3000/api/ranking')
+        .then(res => res.json())
+        .then(data => {
+            limpiarContenedores();
+            document.getElementById("botones").style.display = "flex";
+            document.getElementById("boton-reiniciar").style.display = "inline-block";
+            document.getElementById("boton-confirmar").style.display = "none";
+            const contenedor = document.getElementById('pais');
+            contenedor.innerHTML = "<h2>Ranking Top 20: </h2>";
+
+            const lista = document.createElement('ol');
+
+            data.forEach((partida) => {
+                const item = document.createElement('li');
+                item.textContent = `${partida.nombre} - ${partida.puntos} pts - ${partida.correctas} ✔️ - ${partida.incorrectas} ❌ - ${partida.duracion}s`;
+                lista.appendChild(item);
+            });
+
+            contenedor.appendChild(lista);
+        })
+        .catch(err => {
+            console.error('Error al obtener el ranking:', err);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo cargar el ranking.'
+            });
+        });
 }
 
 
+function reiniciarJuego() {
+    // Reiniciar variables
+    contadorPreguntas = 0;
+    respuestasCorrectas = 0;
+    respuestasIncorrectas = 0;
+    puntos = 0;
+    tiemposRespuesta = [];
+    inicioPartida = null;
+    inicioPregunta = null;
+
+
+
+    // Limpiar pantalla
+    limpiarContenedores();
+    document.getElementById('pregunta').innerHTML = "";
+    document.getElementById('boton-reiniciar').style.display = 'none';
+
+    // Pedir el nombre de nuevo
+    pedirNombre();
+    // Empezar nueva partida
+    // seleccionarPregunta();
+}
+
 
 if (contadorPreguntas <= 10) {
-    seleccionarPregunta();
+    if (pedirNombre() === true) {
+        seleccionarPregunta();
+    }
+
+
 } else {
     finalizarJuego();
 }

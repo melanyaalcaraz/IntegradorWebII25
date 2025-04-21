@@ -9,9 +9,10 @@
 </head>
 
 <body>
-
-    <h1>Preguntados: Edición paises</h1>
-    
+    <div class="menu">
+        <h1 id="titulo">Preguntados: Edición paises</h1>
+        <button onclick="mostrarRanking()" id="boton-ranking">Ver Ranking</button>
+    </div>
     <br><br>
     <p id="pregunta"> </p>
     <div id="opciones">
@@ -22,7 +23,7 @@
     
     <div id="botones">
         <button onclick="validarRespuestas()" id="boton-confirmar">Validar</button>
-        
+        <button onclick="reiniciarJuego()" id="boton-reiniciar" style="display: none;">Reiniciar</button>
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
