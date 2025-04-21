@@ -582,7 +582,7 @@ function finalizarJuego() {
 
 function mostrarRanking() {
 
-    fetch('http://localhost:3000/api/ranking')
+    fetch('https://backend-preguntados.vercel.app/')
         .then(res => res.json())
         .then(data => {
             limpiarContenedores();
