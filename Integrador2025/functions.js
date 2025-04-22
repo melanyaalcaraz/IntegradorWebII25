@@ -433,7 +433,7 @@ async function generarPreguntaLimitrofes() {
 }
 
 function guardarPartida(nombre, puntos, correctas, incorrectas, duracion) {
-    fetch('https://pruebabackend-delta.vercel.app/api/ranking', {
+    fetch('https://backend-preguntados.onrender.com/api/ranking', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -582,7 +582,7 @@ function finalizarJuego() {
 
 function mostrarRanking() {
 
-    fetch('https://pruebabackend-delta.vercel.app/api/ranking')
+    fetch('https://backend-preguntados.onrender.com/api/ranking')
         .then(res => res.json())
         .then(data => {
             limpiarContenedores();
