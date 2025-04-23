@@ -434,7 +434,7 @@ async function generarPreguntaLimitrofes() {
 
 function guardarPartida(nombre, puntos, correctas, incorrectas, duracion) {
     console.log("guardando pregunta")
-    fetch('https://backend-preguntados.onrender.com/api/ranking', {
+    fetch('https://bandera-backend-production.up.railway.app/api/ranking', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -583,7 +583,7 @@ function finalizarJuego() {
 
 function mostrarRanking() {
     console.log("cargando ranking")
-    fetch('https://backend-preguntados.onrender.com/api/ranking')
+    fetch('https://bandera-backend-production.up.railway.app/api/ranking')
         .then(res => res.json())
         .then(data => {
             limpiarContenedores();
