@@ -433,6 +433,7 @@ async function generarPreguntaLimitrofes() {
 }
 
 function guardarPartida(nombre, puntos, correctas, incorrectas, duracion) {
+    console.log("guardando pregunta")
     fetch('https://backend-preguntados.onrender.com/api/ranking', {
         method: 'POST',
         headers: {
@@ -581,7 +582,7 @@ function finalizarJuego() {
 }
 
 function mostrarRanking() {
-
+    console.log("cargando ranking")
     fetch('https://backend-preguntados.onrender.com/api/ranking')
         .then(res => res.json())
         .then(data => {
