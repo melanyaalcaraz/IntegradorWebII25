@@ -40,4 +40,4 @@
 
 ## 👩‍💻 Autor
 
-Melanya Alcaraz – Proyecto final para la materia **Programación Web II**
+Melany Antonella Alcaraz – Proyecto final para la materia **Programación Web II**
