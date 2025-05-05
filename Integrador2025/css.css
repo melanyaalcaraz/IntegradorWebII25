@@ -7,42 +7,25 @@ body {
 
 .menu {
     display: flex;
-    /* Activamos Flexbox */
     justify-content: space-between;
-    /* Espacio entre el h1 y el botón */
     align-items: center;
-    /* Centra el contenido verticalmente (si es necesario) */
     padding: 10px;
-    /* Añadimos algo de espacio alrededor */
-     margin-top: 0px;
-     
+    margin-top: 0px;
 }
 
 
 h1 {
     margin: 0;
-    /* Elimina márgenes predeterminados */
 }
 
 #boton-ranking {
     padding: 10px 20px;
-  
     background-color: #4CAF50;
-    
     color: white;
-   
     border: none;
-    
     border-radius: 5px;
-   
     cursor: pointer;
-    
- } 
-
-#boton-ranking:hover {
-    background-color: #45a049;
-    /* Cambia el color del fondo al pasar el ratón */
- } 
+}
 
 #opciones {
     margin: 0 auto;
@@ -50,7 +33,6 @@ h1 {
     display: grid;
     justify-content: center;
     align-items: center;
-    
 }
 
 #pregunta {
@@ -60,7 +42,6 @@ h1 {
     justify-content: center;
     align-items: center;
     gap: 20px;
-    
 }
 
 div {
@@ -71,17 +52,16 @@ div {
     align-items: center;
     gap: 20px;
     margin-top: 35px;
- 
 }
+
 label:hover {
     background-color: rgba(255, 255, 255, 0.2);
     font-size: xx-large;
-   
-   
 }
 
- #boton-confirmar,
-#botonIniciar, #boton-reiniciar {
+#boton-confirmar,
+#botonIniciar,
+#boton-reiniciar {
     background-color: #4CAF51;
     color: white;
     font-size: 16px;
@@ -94,23 +74,17 @@ label:hover {
     justify-content: center;
 }
 
-#boton-confirmar:hover {
-    background-color: #45a049;
-    /* Fondo más oscuro al pasar el mouse */
- }
-
-#boton-sPregunta:hover {
-    background-color: #45a049;
-    /* Fondo más oscuro al pasar el mouse */
- }  
+#boton-sPregunta:hover,
+#boton-confirmar:hover,
+#botonIniciar:hover,
+#boton-ranking:hover{
+    background-color:  #45a049;
+}
 
 #botones {
     display: flex;
     justify-content: center;
-    /* Centra horizontalmente */
     align-items: center;
-    /* Centra verticalmente */
-
 }
 
 input {
@@ -134,8 +108,25 @@ button {
     cursor: pointer;
     transition: 0.3s ease all;
     margin: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-     background-color: #4CAF50; 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    background-color: #4CAF50;
     color: white;
-  }
+}
 
+#pais {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: max-content;
+}
+
+#pais input#nombreJugador {
+    padding: 10px;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    width: 250px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    text-align: center;
+}

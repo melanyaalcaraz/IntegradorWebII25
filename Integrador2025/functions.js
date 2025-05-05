@@ -296,74 +296,6 @@ async function generarPreguntaBandera() {
 }
 
 
-//Funcion para pregunta idioma(pregunta extra)
-async function generarPreguntaIdioma() {
-    try {
-        if (contadorPreguntas >= maxPreguntas) {
-            finalizarJuego(); // Llamar a una función para finalizar el juego
-            return; // Detener el flujo si se alcanza el número máximo de preguntas
-        }
-
-        limpiarContenedores(); // Limpia la interfaz antes de generar una nueva pregunta
-        contadorPreguntas++; // Incrementar el contador
-
-
-        const todosLosPaises = await conectar('/all'); // Obtener todos los países
-        const paisCorrecto = todosLosPaises[Math.floor(Math.random() * todosLosPaises.length)]; // Seleccionar un país correcto
-
-        // Obtener el idioma principal del país correcto
-        const idiomasCorrectos = paisCorrecto.languages ? Object.values(paisCorrecto.languages) : [];
-        const idiomaCorrecto = idiomasCorrectos.length > 0 ? idiomasCorrectos[0] : "Desconocido";
-
-        // Generar tres opciones incorrectas aleatorias (otros países)
-        const opcionesIncorrectas = todosLosPaises
-            .filter(country => country.name.common !== paisCorrecto.name.common) // Excluir el país correcto
-            .sort(() => 0.5 - Math.random()) // Mezclar aleatoriamente
-            .slice(0, 3); // Tomar tres países aleatorios
-
-        // Mezclar las opciones junto con el país correcto
-        const opciones = [
-            paisCorrecto, // País correcto
-            ...opcionesIncorrectas // Países incorrectos
-        ]
-            .sort(() => 0.5 - Math.random()) // Mezclar todas las opciones
-        // Convertir a formato esperado
-
-        console.log(opciones); // Verificar que las opciones tienen el formato correcto
-
-        // Mostrar la pregunta en el contenedor correspondiente
-        const preguntaContainer = document.getElementById('pregunta');
-        preguntaContainer.textContent = `¿En qué país se habla este idioma: ${idiomaCorrecto}?`;
-
-        // Generar los radios con los nombres de los países
-        generarRadios(opciones);
-
-        // Configurar la validación de la respuesta cuando se haga clic en el botón
-        const radios = document.getElementsByName('pais');
-        const boton = document.getElementById('boton-confirmar');
-        boton.onclick = async () => {
-            let seleccionado = null;
-
-            // Buscar cuál radio fue seleccionado
-            for (const radio of radios) {
-                if (radio.checked) {
-                    seleccionado = radio.value;
-                    break;
-                }
-            }
-
-            const esCorrecto = await validarRespuestas(seleccionado, paisCorrecto.name.common);
-            if (esCorrecto == true) {
-                puntos += 3;
-                respuestasCorrectas++;
-            } else if (esCorrecto == false) {
-                respuestasIncorrectas++;
-            }
-        };
-    } catch (error) {
-        console.error("Error al generar la pregunta de países por idioma:", error);
-    }
-}
 
 
 //Funcion para generar pregunta de paises limitrofes
@@ -487,7 +419,7 @@ function seleccionarPregunta() {
     // Registrar el inicio de la nueva pregunta
     inicioPregunta = new Date();
 
-    const tipoPregunta = Math.floor(Math.random() * 4);
+    const tipoPregunta = Math.floor(Math.random() * 3);
     switch (tipoPregunta) {
         case 0:
             generarPreguntaCapital();
@@ -497,9 +429,6 @@ function seleccionarPregunta() {
             break;
         case 2:
             generarPreguntaLimitrofes();
-            break;
-        case 3:
-            generarPreguntaIdioma();
             break;
         default:
             console.error('Tipo de pregunta no reconocido');
@@ -511,7 +440,7 @@ let jugadorListo = false; // Variable para controlar si el jugador está listo
 
 function pedirNombre() {
     document.getElementById("botones").style.display = "none";
-    const opciones = document.getElementById("opciones");
+    const opciones = document.getElementById("pais");
     opciones.innerHTML = ""; // Limpiar cualquier contenido previo
 
     // Crear el input de texto
