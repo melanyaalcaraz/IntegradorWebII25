@@ -32,7 +32,7 @@
 
 ### Hosting
 - Frontend: [Netlify](https://melanyaalcaraz.netlify.app/)
-- Backend: [Railway](https://railway.com/project/12a61d92-56cc-4761-9681-49fe9133dc06?environmentId=c448d76a-9a16-47f0-bf9b-530f2725bcb2)
+- Backend: [Railway](https://railway.com/project/12a61d92-56cc-4761-9681-49fe9133dc06/settings/webhooks/new?environmentId=c448d76a-9a16-47f0-bf9b-530f2725bcb2)
 
 ## 🚀 Link al juego
 
